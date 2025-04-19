@@ -12,9 +12,12 @@ spec:
       labels:
         app: my-flask-app
     spec:
+      imagePullSecrets:
+        - name: ghcr-creds
       containers:
       - name: my-flask-app
-        image: localhost/my-flask-app:latest
+        image: ghcr.io/cecilegltslmcs/my-flask-app:latest
+        imagePullPolicy: Always
         readinessProbe:
           httpGet:
             path: /readyz

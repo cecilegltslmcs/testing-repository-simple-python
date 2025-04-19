@@ -24,8 +24,25 @@ gunicorn -w 4 -b 0.0.0.0:8888 src:application
 - Migration vers FastAPI pour une meilleure gestion de l'asynchrone
 - Ajout de documentation technique (exemple de docstring dans `health.py`).
 
-## Deploiement
+## Déploiement
 
-- Creation d'un _Dockerfile_ optimisé.
+- Création d'un _Dockerfile_ optimisé.
 - Mise à jour de Python de la version 3.11 à 3.12 pour corriger une vulnérabilité critique.
 - Ajout d’un workflow de build automatique dans GitHub Actions pour la publication d’image sur GHCR.
+
+### Déploiement avec Kubernetes
+
+- Création des manifests Kubernetes associés à l'application dans `kube_config` :
+    - _config-map.yaml_ : Contient les variables d'environnement pour la base de données. Pourra être modifié en secrets si besoin de cacher des mots de passe ou d'autres informations sensibles
+    - _deployment.yaml_ : Informations du déploiement en lien avec l'application
+    - _hpa.yaml_ : Gestion de la montée en charge en se basant sur les ressources liées au CPU
+    - _ingress.yaml_ : Permet d'accéder à l'API à travers un reverse proxy propre à Kubernetes
+    - _service.yaml_ : Permet d'exposer le déploiement.
+
+Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config/).
+- Ajout d’un workflow de déploiement local dans K3d, avec vérification automatique de l’endpoint `/readyz` via un _port-forward_ dans le pipeline CI.
+
+### Suggestions complémentaires
+
+- Passer le déploiement Kubernetes en charts Helm pour améliorer la portabilité, le templating et la gestion des environnements.
+- Utiliser Kustomize pour gérer facilement plusieurs overlays (développement, staging, production) à partir des mêmes bases YAML.
