@@ -3,7 +3,6 @@
 ![CI](https://github.com/cecilegltslmcs/testing-repository-simple-python/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://img.shields.io/badge/coverage-via--pytest-blue)
 [![codecov](https://codecov.io/gh/cecilegltslmcs/testing-repository-simple-python/branch/main/graph/badge.svg)](https://codecov.io/gh/cecilegltslmcs/testing-repository-simple-python)
-![Docker](https://img.shields.io/badge/docker-GHCR%20push-success-brightgreen)
 
 ## Généralités
 
