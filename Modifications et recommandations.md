@@ -10,6 +10,7 @@
 - Mise à jour de la configuration `pre-commit` :
     - Remplacement de *flake8* et *black* par **Ruff**.
     - Ajout de hooks basiques : `check-yaml`, `check-docstring`, `end-of-file-fixer`, etc.
+- Upgrade de Python vers la version 3.12.10 pour mitigation des CVE récentes (ex : CVE-2023-40217, CVE-2023-6597), renforçant la sécurité du runtime.
 
 ## Application
 
@@ -56,3 +57,7 @@ Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config
 
 - Passer le déploiement Kubernetes en charts Helm pour améliorer la portabilité, le templating et la gestion des environnements.
 - Utiliser Kustomize pour gérer facilement plusieurs overlays (développement, staging, production) à partir des mêmes bases YAML.
+
+## Infrastructure et déploiement sur AWS
+
+![alt text](Illustrations/infrastructure.png)
