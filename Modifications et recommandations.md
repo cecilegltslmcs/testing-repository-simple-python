@@ -25,7 +25,8 @@ gunicorn -w 4 -b 0.0.0.0:8888 src:application
 
 - Migration vers __FastAPI__ pour une meilleure gestion de l'asynchrone
 - Ajout de documentation technique (exemple de docstring dans `health.py`).
-- Migration vers __uv__ pour une gestion plus rapide et fiable des environnements, et la génération d’un requirements.lock utilisable dans CI
+- Migration vers __uv__ pour une gestion plus rapide et fiable des environnements, et la génération d’un requirements.lock utilisable dans CI.
+- Remplacer le fichier _data.json_ par une base de données in-memory comme _Redis_, afin d'assurer la persistance des données partagées entre plusieurs instances et améliorer la gestion des accès concurrents.
 
 ## Déploiement
 
