@@ -3,6 +3,9 @@
 ## Généralités
 
 - Création de GitHub Actions pour le lint et les tests unitaires.
+- Modifications de pre-commit
+    - Remplacement de _flake8_ et _black_ par __Ruff__
+    - Ajout de hooks basiques (check-yaml, check-docstring, end-of-file-fixer, _etc._)
 
 ## Application
 
