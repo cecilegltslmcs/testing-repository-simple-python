@@ -33,7 +33,8 @@ jobs:
 
         - name: Install Kubescape
           run: |
-            curl -LO kubescape https://github.com/kubescape/kubescape/releases/latest/download/kubescape-linux-amd64
+            curl -LO https://github.com/kubescape/kubescape/releases/latest/download/kubescape-linux-amd64
+            kubescape-linux-amd64 kubescape
             chmod +x kubescape
             sudo mv kubescape /usr/local/bin/
 
