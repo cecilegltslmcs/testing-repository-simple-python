@@ -8,7 +8,7 @@ metadata:
     name: my-flask-app
 spec:
   rules:
-  - hosts: my-flask-app.local
+  - host: my-flask-app.local
     http:
       paths:
       - pathType: Prefix
