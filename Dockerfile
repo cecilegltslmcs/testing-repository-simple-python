@@ -1,4 +1,4 @@
-FROM python:3.12.10-slim@sha256:82c07f2f6e35255b92eb16f38dbd22679d5e8fb523064138d7c6468e7bf0c15b
+FROM python:3.12.10-slim@sha256:85824326bc4ae27a1abb5bc0dd9e08847aa5fe73d8afb593b1b45b7cb4180f57
 
 RUN useradd -m user
 
