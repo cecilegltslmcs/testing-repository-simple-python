@@ -45,6 +45,7 @@ gunicorn -w 4 -b 0.0.0.0:8888 src:application
 
 Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config/).
 - Ajout d’un workflow de déploiement local dans K3d, avec vérification automatique de l’endpoint `/readyz` via un _port-forward_ dans le pipeline CI.
+- Ajout d'un scan de sécurité du cluster après déploiement avec __Kubescape__.
 
 ### Suggestions complémentaires
 

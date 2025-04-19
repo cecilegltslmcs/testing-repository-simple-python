@@ -31,6 +31,15 @@ jobs:
             kubectl apply -f kube_config/
             kubectl rollout status deployment my-flask-app --timeout=60s
 
+        - name: Install Kubescape
+          run: |
+            curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+
+        - name: Scan live K3d cluster with Kubescape
+          run: |
+            kubescape scan framework mitre --submit=false --format pretty --use-kubescape-v2
+
+
         - name: Wait and test readyz endpoint
           run: |
             kubectl port-forward svc/my-flask-app-service 8888:8888 &
