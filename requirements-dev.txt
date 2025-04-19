@@ -2,6 +2,8 @@ black
 flake8
 reorder-python-imports
 pre-commit
+python-dotenv
+pytest
 gitpython==3.1.31
 
 -r requirements.txt
