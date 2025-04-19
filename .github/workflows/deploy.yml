@@ -1,0 +1,42 @@
+name: CI - Deploy to k3d
+on: [push, pull_request]
+
+jobs:
+    k3d-test:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Set up k3d
+          run: |
+            curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+            k3d cluster create cluster-test --wait
+
+        - name: Set up kubectl
+          uses: azure/setup-kubectl@v3
+          with:
+            version: "v1.32.2"
+
+        - name: Create GHCR image pull secret
+          run: |
+              kubectl create secret docker-registry ghcr-creds \
+                --docker-server=ghcr.io \
+                --docker-username=${{ github.actor }} \
+                --docker-password=${{ secrets.GITHUB_TOKEN }}
+
+        - name: Apply Kubernetes manifests
+          run: |
+            kubectl apply -f kube_config/
+            kubectl rollout status deployment my-flask-app --timeout=60s
+
+        - name: Wait and test readyz endpoint
+          run: |
+            kubectl port-forward svc/my-flask-app 8888:8888 &
+            sleep 5
+            curl -f http://localhost:8888/readyz
+
+        - name: Cleanup k3d cluster
+          if: always()
+          run: k3d cluster delete cluster-test

@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-flask-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-flask-app
+  template:
+    metadata:
+      labels:
+        app: my-flask-app
+    spec:
+      imagePullSecrets:
+        - name: ghcr-creds
+      containers:
+      - name: my-flask-app
+        image: ghcr.io/cecilegltslmcs/my-flask-app:latest
+        imagePullPolicy: Always
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8888
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "500m"
+            memory: "256Mi"
+        ports:
+        - containerPort: 8888
+        env:
+        - name: DATA_FILE_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: flask-app-configmap
+              key: DATA_FILE_PATH
