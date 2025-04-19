@@ -2,17 +2,17 @@
 
 ## Généralités
 
-- Création d'une CI avec GitHub Actions.
-- Modifications de `pre-commit`
-    - Remplacement de _flake8_ et _black_ par __Ruff__
-    - Ajout de hooks basiques : `check-yaml`, `check-docstring`, `end-of-file-fixer`, _etc._
+- Mise en place d'une intégration continue via GitHub Actions.
+- Mise à jour de la configuration `pre-commit` :
+    - Remplacement de *flake8* et *black* par **Ruff**.
+    - Ajout de hooks basiques : `check-yaml`, `check-docstring`, `end-of-file-fixer`, etc.
 
 ## Application
 
 - Ajout de `python-dotenv` dans `requirements-dev.txt` pour la gestion des variables d'environnement via un fichier `.env`.
-- Création des routes `/healthz` et `/readyz`.
-- Ajout de Gunicorn (présent dans `requirements.txt`) pour un déploiement en production.
-- Ajout de tests unitaires sur le script `health.py` uniquement pour démonstration.
+- Création des routes `/healthz` et `/readyz` pour l’intégration dans des probes Kubernetes.
+- Intégration de Gunicorn (présent dans `requirements.txt`) pour un usage en production.
+- Ajout de tests unitaires sur le script `health.py` à titre de démonstration.
 
 ### Lancement de l'application avec Gunicorn
 
@@ -21,9 +21,11 @@ gunicorn -w 4 -b 0.0.0.0:8888 src:application
 ```
 ### Suggestions complémentaires
 
-- Passage de Flask à FastAPI pour gérer l'asynchrone
-- Documentation du code (Docstring) -> Exemple dans le script `health.py`.
+- Migration vers FastAPI pour une meilleure gestion de l'asynchrone
+- Ajout de documentation technique (exemple de docstring dans `health.py`).
 
 ## Deploiement
 
-- Creation d'un Dockerfile
+- Creation d'un _Dockerfile_ optimisé.
+- Mise à jour de Python de la version 3.11 à 3.12 pour corriger une vulnérabilité critique.
+- Ajout d’un workflow de build automatique dans GitHub Actions pour la publication d’image sur GHCR.
