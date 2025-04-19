@@ -131,14 +131,12 @@ jobs:
 
       - name: Install Kubescape
         run: |
-          curl -LO https://github.com/kubescape/kubescape/releases/latest/download/kubescape-linux-amd64
-          mv kubescape-linux-amd64 kubescape
-          chmod +x kubescape
-          sudo mv kubescape /usr/local/bin/
+          curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+          kubescape version
 
       - name: Scan live K3d cluster with Kubescape
         run: |
-          kubescape scan framework mitre --submit=false --format pretty --use-kubescape-v2
+          kubescape scan framework mitre --submit=false --format pretty
 
       - name: Wait and test readyz endpoint
         run: |
