@@ -6,3 +6,6 @@ venv
 .env
 .DS_STORE
 data.json
+
+.ruff_cache
+.pytest_cache
