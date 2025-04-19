@@ -38,6 +38,7 @@ jobs:
         - name: Scan live K3d cluster with Kubescape
           run: |
             kubescape scan framework mitre --submit=false --format pretty --use-kubescape-v2
+            sudo mv kubescape /usr/local/bin/
 
 
         - name: Wait and test readyz endpoint
