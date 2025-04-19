@@ -1,5 +1,4 @@
 name: CI - Run Pytest
-run-name: ${{ github.actor }} is testing the API
 on: [push, pull_request]
 jobs:
     test:
@@ -24,7 +23,7 @@ jobs:
 
         - name: Run tests with Pytest
           run: |
-            pytest --verbose --cov=src --cov-report=xml tests/
+            pytest --verbose --cov=src --cov-report=xml -W ignore::DeprecationWarning tests/
 
         - name: Upload coverage report to GitHub
           uses: actions/upload-artifact@v4
