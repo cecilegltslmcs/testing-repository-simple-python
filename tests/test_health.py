@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 import pytest
 from flask import Flask
 
-from src.routes.health import health_bp
+from .src.routes.health import health_bp
 
 
 @pytest.fixture
