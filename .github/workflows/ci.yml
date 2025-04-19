@@ -131,7 +131,9 @@ jobs:
 
       - name: Install Kubescape
         run: |
-          curl -s https://raw.githubusercontent.com/kubescape/kubescape/master/install.sh | /bin/bash
+          curl -s -L https://github.com/kubescape/kubescape/releases/latest/download/kubescape-ubuntu-latest -o kubescape
+          chmod +x kubescape
+          sudo mv kubescape /usr/local/bin/
           kubescape version
 
       - name: Scan live K3d cluster with Kubescape
