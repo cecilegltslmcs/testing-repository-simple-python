@@ -4,5 +4,4 @@ black
 flake8
 gitpython==3.1.31
 pre-commit
-python-dotenv
 reorder-python-imports
