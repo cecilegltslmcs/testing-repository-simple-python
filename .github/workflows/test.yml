@@ -20,7 +20,7 @@ jobs:
             pip install pytest pytest-cov
 
         - name: Set PYTHONPATH
-          run: echo "PYTHONPATH=src" >> $GITHUB_ENV
+          run: echo "PYTHONPATH=$GITHUB_WORKSPACE" >> $GITHUB_ENV
 
         - name: Run tests with Pytest
           run: |
