@@ -33,7 +33,7 @@ jobs:
 
         - name: Wait and test readyz endpoint
           run: |
-            kubectl port-forward svc/my-flask-app 8888:8888 &
+            kubectl port-forward svc/my-flask-app-service 8888:8888 &
             sleep 5
             curl -f http://localhost:8888/readyz
 
