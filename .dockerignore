@@ -1,0 +1,39 @@
+# Environnements et Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+.venv/
+venv/
+*.egg-info/
+
+# Git
+.git
+.gitignore
+
+# Tests et outils de dev
+tests/
+*.log
+*.coverage
+coverage.xml
+.cache/
+pytest_cache/
+.tox/
+.mypy_cache/
+
+# IDEs
+.vscode/
+.idea/
+
+# Docker
+Dockerfile
+.dockerignore
+
+# CI/CD configs
+.github/
+
+# Autres
+*.md
+data.json
