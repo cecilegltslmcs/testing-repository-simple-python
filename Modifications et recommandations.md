@@ -57,7 +57,33 @@ Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config
 
 - Passer le déploiement Kubernetes en charts Helm pour améliorer la portabilité, le templating et la gestion des environnements.
 - Utiliser Kustomize pour gérer facilement plusieurs overlays (développement, staging, production) à partir des mêmes bases YAML.
+- Mettre en place de la méthodologie GitOps pour déployer automatiquement dans Kubernetes : Pour améliorer le delivery, il serait intéressant de mettre en place un outil comme ArgoCD pour automatiser le deploiement dans Kubernetes.
 
 ## Infrastructure et déploiement sur AWS
 
 ![alt text](Illustrations/infrastructure.png)
+
+_Cette architecture représente un déploiement typique de l'application sur AWS via EKS, avec séparation des responsabilités (pod applicatif, monitoring, BDD externalisée), exposition via ALB, et pilotage des droits via IAM._
+
+Le déploiement de l'infrastructure sur AWS se fait de manière automatisée avec Open Tofu (version open source de Terraform basé sur le langage HCL). Les différents scripts sont présents dans [`infrastructure`](infrastructure/). Les fichiers suivants sont disponibles :
+- _main.tf_ : Description des services à provisionner sur AWS. Par souci de simplicité, seuls le VPC, l’IAM et un cluster Kubernetes via EKS sont provisionnés.
+- _outputs.tf_ : Liste des outputs à afficher lors que le provisionnement est terminé.
+- _terraform.tf_ : Informations sur les providers.
+- _variables.tf_ : Nom des variables dans le provisionnement.
+
+![alt text](Illustrations/output_tofu.png)
+_Exemple d'output pour le provisionnement de services AWS_
+
+### Suggestions complémentaires
+
+- Mettre un Load Balancer en place avec AWS ALB pour gérer l'afflux de connexion.
+- Ajuster le déploiement avec les services déjà en place (mutualisation de l'IAM par exemple).
+- Mettre en place des workflows dans Github Actions pour automatiser le déploiement dans AWS EKS.
+
+## Pour la suite...
+
+Cette base fournit une fondation robuste sur laquelle itérer. Les étapes suivantes visent à consolider la fiabilité en production et améliorer l’observabilité de la plateforme.
+
+- Mettre en place une stack de monitoring Prometheus + Grafana dans le cluster, couplée à AlertManager pour le suivi SLA/SLO.
+- S’adapter aux outils de supervision éventuellement déjà déployés.
+- Ajouter la métrique /metrics à l’app pour l’exposition Prometheus si nécessaire.
