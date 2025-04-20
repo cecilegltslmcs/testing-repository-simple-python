@@ -4,12 +4,15 @@
 ![Coverage](https://img.shields.io/badge/coverage-via--pytest-blue)
 [![codecov](https://codecov.io/gh/cecilegltslmcs/testing-repository-simple-python/branch/main/graph/badge.svg)](https://codecov.io/gh/cecilegltslmcs/testing-repository-simple-python)
 
+Ce document récapitule les modifications apportées au projet de base pour le rendre plus robuste, scalable, observable et prêt à être déployé dans un environnement de production sur AWS.
+
 ## Généralités
 
 - Mise en place d'une intégration continue via GitHub Actions.
 - Mise à jour de la configuration `pre-commit` :
     - Remplacement de *flake8* et *black* par **Ruff**.
     - Ajout de hooks basiques : `check-yaml`, `check-docstring`, `end-of-file-fixer`, etc.
+- Upgrade de Python vers la version 3.12.10 afin de corriger plusieurs vulnérabilités connues (ex : CVE-2023-40217, CVE-2023-6597), renforçant la sécurité du runtime pour les environnements de production.
 
 ## Application
 
@@ -35,7 +38,6 @@ gunicorn -w 4 -b 0.0.0.0:8888 src:application
 ## Déploiement
 
 - Mise en place d'un _Dockerfile_ optimisé.
-- Mise à jour de Python de la version 3.11 à 3.12 pour corriger une vulnérabilité critique.
 - Mise en place d’un workflow de build automatique dans GitHub Actions pour la publication d’image sur GHCR.
 - Mise en place d'un scan de sécurité de l'image buildé avec __Trivy__.
 
@@ -56,3 +58,33 @@ Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config
 
 - Passer le déploiement Kubernetes en charts Helm pour améliorer la portabilité, le templating et la gestion des environnements.
 - Utiliser Kustomize pour gérer facilement plusieurs overlays (développement, staging, production) à partir des mêmes bases YAML.
+- Mettre en place de la méthodologie GitOps pour déployer automatiquement dans Kubernetes : Pour améliorer le delivery, il serait intéressant de mettre en place un outil comme ArgoCD pour automatiser le deploiement dans Kubernetes.
+
+## Infrastructure et déploiement sur AWS
+
+![alt text](Illustrations/infrastructure.png)
+
+_Cette architecture représente un déploiement typique de l'application sur AWS via EKS, avec séparation des responsabilités (pod applicatif, monitoring, BDD externalisée), exposition via ALB, et pilotage des droits via IAM._
+
+Le déploiement de l'infrastructure sur AWS se fait de manière automatisée avec Open Tofu (version open source de Terraform basé sur le langage HCL). Les différents scripts sont présents dans [`infrastructure`](infrastructure/). Les fichiers suivants sont disponibles :
+- _main.tf_ : Description des services à provisionner sur AWS. Par souci de simplicité, seuls le VPC, l’IAM et un cluster Kubernetes via EKS sont provisionnés.
+- _outputs.tf_ : Liste des outputs à afficher lors que le provisionnement est terminé.
+- _terraform.tf_ : Informations sur les providers.
+- _variables.tf_ : Nom des variables dans le provisionnement.
+
+![alt text](Illustrations/output_tofu.png)
+_Exemple d'output pour le provisionnement de services AWS_
+
+### Suggestions complémentaires
+
+- Mettre un Load Balancer en place avec AWS ALB pour gérer l'afflux de connexion.
+- Ajuster le déploiement avec les services déjà en place (mutualisation de l'IAM par exemple).
+- Mettre en place des workflows dans Github Actions pour automatiser le déploiement dans AWS EKS.
+
+## Pour la suite...
+
+Cette base fournit une fondation robuste sur laquelle itérer. Les étapes suivantes visent à consolider la fiabilité en production et améliorer l’observabilité de la plateforme.
+
+- Mettre en place une stack de monitoring Prometheus + Grafana dans le cluster, couplée à AlertManager pour le suivi SLA/SLO.
+- S’adapter aux outils de supervision éventuellement déjà déployés.
+- Ajouter la métrique /metrics à l’app pour l’exposition Prometheus si nécessaire.
