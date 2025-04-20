@@ -4,13 +4,15 @@
 ![Coverage](https://img.shields.io/badge/coverage-via--pytest-blue)
 [![codecov](https://codecov.io/gh/cecilegltslmcs/testing-repository-simple-python/branch/main/graph/badge.svg)](https://codecov.io/gh/cecilegltslmcs/testing-repository-simple-python)
 
+Ce document récapitule les modifications apportées au projet de base pour le rendre plus robuste, scalable, observable et prêt à être déployé dans un environnement de production sur AWS.
+
 ## Généralités
 
 - Mise en place d'une intégration continue via GitHub Actions.
 - Mise à jour de la configuration `pre-commit` :
     - Remplacement de *flake8* et *black* par **Ruff**.
     - Ajout de hooks basiques : `check-yaml`, `check-docstring`, `end-of-file-fixer`, etc.
-- Upgrade de Python vers la version 3.12.10 pour mitigation des CVE récentes (ex : CVE-2023-40217, CVE-2023-6597), renforçant la sécurité du runtime.
+- Upgrade de Python vers la version 3.12.10 afin de corriger plusieurs vulnérabilités connues (ex : CVE-2023-40217, CVE-2023-6597), renforçant la sécurité du runtime pour les environnements de production.
 
 ## Application
 
@@ -36,7 +38,6 @@ gunicorn -w 4 -b 0.0.0.0:8888 src:application
 ## Déploiement
 
 - Mise en place d'un _Dockerfile_ optimisé.
-- Mise à jour de Python de la version 3.11 à 3.12 pour corriger une vulnérabilité critique.
 - Mise en place d’un workflow de build automatique dans GitHub Actions pour la publication d’image sur GHCR.
 - Mise en place d'un scan de sécurité de l'image buildé avec __Trivy__.
 
