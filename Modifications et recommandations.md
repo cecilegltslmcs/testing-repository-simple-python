@@ -17,48 +17,53 @@ Ce document récapitule les modifications apportées au projet de base pour le r
 ## Application
 
 - Mise en place de `python-dotenv` dans `requirements-dev.txt` pour la gestion des variables d'environnement via un fichier `.env`.
-- Mise en place des routes `/healthz` et `/readyz` pour l’intégration dans des probes Kubernetes.
+- Mise en place des routes `/healthz` et `/readyz` pour l’intégration dans des probes Kubernetes (cf. [`health.py`](src/routes/health.py)).
 - Mise en place de Gunicorn (présent dans `requirements.txt`) pour un usage en production.
-- Mise en place de tests unitaires sur le script `health.py` à titre de démonstration.
+- Mise en place de tests unitaires sur le script `health.py` à titre de démonstration (cf. [`test_health.py`](tests/test_health.py)).
 
 ### Lancement de l'application avec Gunicorn
+
+- Mise en place d'un serveur WSGI pour l'exécution en production. 
 
 ```bash
 gunicorn -w 4 -b 0.0.0.0:8888 src:application
 ```
-> (cf. fichier Dockerfile pour plus de détails)
 
 ### Suggestions complémentaires
 
-- Migration vers __FastAPI__ pour une meilleure gestion de l'asynchrone
-- Ajout de documentation technique (exemple de docstring dans `health.py`).
-- Migration vers __uv__ pour une gestion plus rapide et fiable des environnements, et la génération d’un requirements.lock utilisable dans CI.
-- Remplacer le fichier _data.json_ par une base de données in-memory comme _Redis_, afin d'assurer la persistance des données partagées entre plusieurs instances et améliorer la gestion des accès concurrents.
+- Migration vers FastAPI pour une gestion optimisée de l’asynchrone.
+- Ajout de documentation technique, notamment via des docstrings standardisées.
+- Utilisation de __uv__ pour accélérer la gestion des environnements et ajouter un verrouillage de version via `requirements.lock`.
+- Connexion à une base de données PostgreSQL (ex. AWS RDS) en remplacement de data.json, pour assurer la persistance multi-instance et un accès concurrent fiable.
 
 ## Déploiement
 
-- Mise en place d'un _Dockerfile_ optimisé.
-- Mise en place d’un workflow de build automatique dans GitHub Actions pour la publication d’image sur GHCR.
-- Mise en place d'un scan de sécurité de l'image buildé avec __Trivy__.
+- Mise en place d’un __Dockerfile__ optimisé.
+- Workflow GitHub Actions de build et de publication de l’image sur GHCR.
+- Scan de sécurité de l’image Docker via __Trivy__.
 
 ### Déploiement Kubernetes local (K3d)
 
-- Mise en place des manifests Kubernetes associés à l'application dans `kube_config` :
+- Déploiement local orchestré via les manifests Kubernetes présents dans `kube_config/` :
+```bash
+kubectl apply -f kube_config/
+```
+Contenu :
     - _config-map.yaml_ : Contient les variables d'environnement pour la base de données. Pourra être modifié en secrets si besoin de cacher des mots de passe ou d'autres informations sensibles
     - _deployment.yaml_ : Informations du déploiement en lien avec l'application
     - _hpa.yaml_ : Gestion de la montée en charge en se basant sur les ressources liées au CPU
     - _ingress.yaml_ : Permet d'accéder à l'API à travers un reverse proxy propre à Kubernetes
     - _service.yaml_ : Permet d'exposer le déploiement.
-
 Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config/).
-- Mise en place d’un workflow de déploiement local dans K3d, avec vérification automatique de l’endpoint `/readyz` via un _port-forward_ dans le pipeline CI.
+
+- Mise en place d’un workflow de déploiement local dans K3d, avec vérification automatique de l’endpoint `/readyz` via un _port-forward_ dans la pipeline CI.
 - Mise en place d'un scan de sécurité du cluster après déploiement avec __Kubescape__.
 
 ### Suggestions complémentaires
 
-- Passer le déploiement Kubernetes en charts Helm pour améliorer la portabilité, le templating et la gestion des environnements.
-- Utiliser Kustomize pour gérer facilement plusieurs overlays (développement, staging, production) à partir des mêmes bases YAML.
-- Mettre en place de la méthodologie GitOps pour déployer automatiquement dans Kubernetes : Pour améliorer le delivery, il serait intéressant de mettre en place un outil comme ArgoCD pour automatiser le deploiement dans Kubernetes.
+- Migration vers __Helm__ pour plus de souplesse (templating, gestion des versions).
+- Adoption de __Kustomize__ pour gérer les overlays (dev, staging, prod).
+- Passage à une logique __GitOps__ (ex. _ArgoCD_) pour automatiser les déploiements Kubernetes.
 
 ## Infrastructure et déploiement sur AWS
 
@@ -66,25 +71,32 @@ Tous les fichiers mentionnés sont disponibles dans [`kube_config/`](kube_config
 
 _Cette architecture représente un déploiement typique de l'application sur AWS via EKS, avec séparation des responsabilités (pod applicatif, monitoring, BDD externalisée), exposition via ALB, et pilotage des droits via IAM._
 
-Le déploiement de l'infrastructure sur AWS se fait de manière automatisée avec Open Tofu (version open source de Terraform basé sur le langage HCL). Les différents scripts sont présents dans [`infrastructure`](infrastructure/). Les fichiers suivants sont disponibles :
-- _main.tf_ : Description des services à provisionner sur AWS. Par souci de simplicité, seuls le VPC, l’IAM et un cluster Kubernetes via EKS sont provisionnés.
-- _outputs.tf_ : Liste des outputs à afficher lors que le provisionnement est terminé.
-- _terraform.tf_ : Informations sur les providers.
-- _variables.tf_ : Nom des variables dans le provisionnement.
+Le provisionnement de l’infrastructure est automatisé avec __Open Tofu__ (fork open source de __Terraform__ basé sur HCL). Les fichiers sont disponibles dans `infrastructure/`.
+
+Fichiers inclus : 
+- _main.tf_ : Provisionnement du VPC, des rôles IAM et du cluster EKS.
+- _outputs.tf_ : Export des informations utiles après déploiement.
+- _terraform.tf_ : Configuration des providers.
+- _variables.tf_ : Paramètres d’entrée.
 
 ![alt text](Illustrations/output_tofu.png)
 _Exemple d'output pour le provisionnement de services AWS_
 
 ### Suggestions complémentaires
 
-- Mettre un Load Balancer en place avec AWS ALB pour gérer l'afflux de connexion.
-- Ajuster le déploiement avec les services déjà en place (mutualisation de l'IAM par exemple).
-- Mettre en place des workflows dans Github Actions pour automatiser le déploiement dans AWS EKS.
+- Mise en place d’un AWS ALB pour gérer l’afflux des connexions externes.
+- Réutilisation des rôles IAM existants (mutualisation).
+- Intégration du provisioning AWS dans les workflows GitHub Actions.
 
 ## Pour la suite...
 
-Cette base fournit une fondation robuste sur laquelle itérer. Les étapes suivantes visent à consolider la fiabilité en production et améliorer l’observabilité de la plateforme.
+Cette base fournit une fondation sur laquelle itérer. Les étapes suivantes visent à consolider la fiabilité en production et améliorer l’observabilité de la plateforme.
 
-- Mettre en place une stack de monitoring Prometheus + Grafana dans le cluster, couplée à AlertManager pour le suivi SLA/SLO.
-- S’adapter aux outils de supervision éventuellement déjà déployés.
-- Ajouter la métrique /metrics à l’app pour l’exposition Prometheus si nécessaire.
+- Mise en place d’une stack de monitoring complète basée sur __Prometheus__ / __Grafana__, couplée à __AlertManager__ pour le suivi SLA/SLO.
+- Intégration avec les outils de supervision éventuellement déjà déployés.
+- Exposition d’un endpoint /metrics pour la collecte Prometheus.
+
+L'approche proposée reste agnostique vis-à-vis du fournisseur cloud. Quelques ajustements permettent de basculer vers des solutions auto-hébergées, plus économiques, tout en gardant les mêmes standards de fiabilité :
+- Déploiement de PostgreSQL directement dans le cluster via l’opérateur __CNPG__.
+- Centralisation des logs avec __Fluent Bit__ et __OpenSearch__.
+- Stack de monitoring auto-hébergée au sein du cluster (__Prometheus__, __Grafana__, __AlertManager__).
